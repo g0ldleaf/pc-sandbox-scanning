@@ -11,7 +11,7 @@ pipeline {
                 withAWS(credentials: 'aws-cred', region: 'us-east-1') {
                   sh ''' 
                   docker ps
-                  aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY:$CONTAINER_NAME
+                  aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY:$CONTAINER_NAME
                   echo "Building the Docker image..."
                   docker build -t $ECR_REPOSITORY:$CONTAINER_NAME ./app/
                   docker image  prune -f
@@ -25,7 +25,7 @@ pipeline {
                 withAWS(credentials: 'aws-cred', region: 'us-east-1') {
                   sh ''' 
                   docker ps
-                  $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+                  $(aws ecr get-login --region $AWS_REGION --no-include-email)
                   echo "Image push into registry"
                   docker push $ECR_REPOSITORY:$CONTAINER_NAME
                   '''
@@ -63,7 +63,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-cred', region: 'us-east-1') {
                 sh '''
-                    aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY:$CONTAINER_NAME
+                    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY:$CONTAINER_NAME
                     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o ./docker-compose                    
                     echo "ECR_REPOSITORY=$ECR_REPOSITORY 
                     CONTAINER_NAME=$CONTAINER_NAME" >> .env
